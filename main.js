@@ -1,5 +1,5 @@
 /* ======================================================
-   ENERGYSELECT — Interactions & Animations V2
+   REBATE ASSIST — Interactions & Animations
    ====================================================== */
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -40,32 +40,17 @@ document.addEventListener('DOMContentLoaded', () => {
         }));
     }
 
-    // ---- HERO COUNTER ----
-    const counterEl = document.getElementById('savingsCounter');
-    const savingsBar = document.getElementById('savingsBar');
-    if (counterEl) {
-        let done = false;
-        new IntersectionObserver(([e]) => {
-            if (e.isIntersecting && !done) {
-                done = true;
-                animateValue(counterEl, 0, 2847, 1800);
-                if (savingsBar) setTimeout(() => savingsBar.style.width = '78%', 300);
-            }
-        }, { threshold: 0.3 }).observe(counterEl);
-    }
-
     // ---- STAT COUNTERS ----
     document.querySelectorAll('[data-count]').forEach(el => {
-        new IntersectionObserver(([e]) => {
+        const obs = new IntersectionObserver(([e]) => {
             if (e.isIntersecting) {
                 animateValue(el, 0, parseInt(el.dataset.count), 2000);
-                e.target._obs.unobserve(el);
+                obs.unobserve(el);
             }
-        }, { threshold: 0.3 }).observe(el);
-        el._obs = el._obs; // store ref
+        }, { threshold: 0.3 });
+        obs.observe(el);
     });
 
-    // shared counter animation
     function animateValue(el, start, end, duration) {
         let t0 = null;
         (function step(ts) {
@@ -76,17 +61,6 @@ document.addEventListener('DOMContentLoaded', () => {
             if (p < 1) requestAnimationFrame(step);
         })(performance.now());
     }
-
-    // fix observer ref for stat counters
-    document.querySelectorAll('[data-count]').forEach(el => {
-        const obs = new IntersectionObserver(([e]) => {
-            if (e.isIntersecting) {
-                animateValue(el, 0, parseInt(el.dataset.count), 2000);
-                obs.unobserve(el);
-            }
-        }, { threshold: 0.3 });
-        obs.observe(el);
-    });
 
     // ---- FAQ ----
     document.querySelectorAll('.faq__question').forEach(btn => {
@@ -127,13 +101,14 @@ document.addEventListener('DOMContentLoaded', () => {
             e.preventDefault();
             const btn = form.querySelector('button[type="submit"]');
             const orig = btn.innerHTML;
-            btn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="spin"><path d="M21 12a9 9 0 11-6.219-8.56"/></svg> Calculating...';
+            btn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="spin"><path d="M21 12a9 9 0 11-6.219-8.56"/></svg> Checking eligibility...';
             btn.disabled = true;
             btn.style.opacity = '.7';
             setTimeout(() => {
-                btn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> Quote Request Sent!';
+                btn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> Assessment Request Sent!';
                 btn.style.background = 'var(--green)';
-                setTimeout(() => { btn.innerHTML = orig; btn.disabled = false; btn.style.opacity = ''; btn.style.background = ''; form.reset(); }, 2500);
+                btn.style.color = 'white';
+                setTimeout(() => { btn.innerHTML = orig; btn.disabled = false; btn.style.opacity = ''; btn.style.background = ''; btn.style.color = ''; form.reset(); }, 2500);
             }, 1800);
         });
     }
