@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://rebateassistaustralia.com.au/sitemap.xml
